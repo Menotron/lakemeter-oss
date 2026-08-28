@@ -77,6 +77,8 @@ Monthly cost
 
 Both features bill against the serverless real-time inference SKU. Lakemeter requires an exact rate for the estimate's cloud, region, and tier: if no rate exists for that combination the calculation is rejected rather than falling back to another region's rate.
 
+Unity AI Gateway requires the Premium or Enterprise tier. An estimate on the Standard tier is rejected.
+
 The regional DBU price can change. Review the value shown in Lakemeter and verify important estimates against current Databricks pricing.
 
 ## Excel export

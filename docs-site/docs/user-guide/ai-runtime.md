@@ -76,6 +76,12 @@ AI Runtime requires the Premium or Enterprise tier. An estimate on the Standard 
 
 The regional DBU price can change. Review the value shown in Lakemeter and verify important estimates against current Databricks pricing.
 
+## Excel export
+
+AI Runtime exports as a single row, unlike Unity AI Gateway and Agent Evaluation, which split into one row per billed component. The row carries the monthly runtime hours and the DBUs per node-hour for the selected accelerator, and the configuration column records the accelerator.
+
+The export applies the same two rules as the calculator: it requires an exact regional rate, and it rejects an estimate on the Standard tier.
+
 ## Related workloads
 
 - **Model Serving** prices serving a trained model, which is billed separately from training it.
