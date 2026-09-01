@@ -57,14 +57,15 @@ def calculate_lakeflow_connect_cost(
         # ── Pipeline (DLT Serverless) ─────────────────────────────────
         params = {
             "p1": "DLT", "p2": cloud_upper, "p3": request.region, "p4": tier_upper,
-            "p5": True, "p6": False, "p7": None,
+            "p5": True, "p6": False,
+            "p7": (request.dlt_edition or "ADVANCED").upper(),
             "p8": None, "p9": None, "p10": 0,
             "p11": "on_demand", "p12": "on_demand",
             "p13": usage.runs_per_day,
             "p14": usage.avg_runtime_minutes,
             "p15": usage.days_per_month,
             "p16": usage.hours_per_month,
-            "p17": "standard", "p18": (request.dlt_edition or "ADVANCED").upper(),
+            "p17": "standard", "p18": None,
             "p19": None, "p20": 1,
             "p21": "on_demand", "p22": None,
             "p23": 0, "p24": None, "p25": None, "p26": None,
@@ -75,7 +76,10 @@ def calculate_lakeflow_connect_cost(
         if not pipeline_row:
             raise HTTPException(status_code=500, detail="Pipeline calculation returned no result")
 
-        pipeline_sku = get_product_type_for_pricing(db, "DLT", True, False, None, None, (request.dlt_edition or "ADVANCED").upper())
+        pipeline_sku = get_product_type_for_pricing(
+            db, "DLT", True, False,
+            (request.dlt_edition or "ADVANCED").upper(), None, None,
+        )
         pipeline_dbu_cost = float(pipeline_row.dbu_cost_per_month or 0)
         pipeline_dbu_qty = float(pipeline_row.dbu_per_month or 0)
         pipeline_dbu_price = float(pipeline_row.dbu_price or 0)
@@ -96,13 +100,13 @@ def calculate_lakeflow_connect_cost(
 
             gateway_params = {
                 "p1": "DLT", "p2": cloud_upper, "p3": request.region, "p4": tier_upper,
-                "p5": False, "p6": False, "p7": None,
+                "p5": False, "p6": False, "p7": "ADVANCED",
                 "p8": gateway_instance, "p9": gateway_instance, "p10": 0,
                 "p11": request.gateway_pricing_tier or "on_demand",
                 "p12": request.gateway_pricing_tier or "on_demand",
                 "p13": 0, "p14": 0, "p15": 30,
                 "p16": int(gateway_hours),
-                "p17": "standard", "p18": "ADVANCED",
+                "p17": "standard", "p18": None,
                 "p19": None, "p20": 1,
                 "p21": "on_demand", "p22": None,
                 "p23": 0, "p24": None, "p25": None, "p26": None,
@@ -118,7 +122,9 @@ def calculate_lakeflow_connect_cost(
                 gw_vm_cost = float(gateway_row.vm_cost_per_month or 0)
                 gw_total = gw_dbu_cost + gw_vm_cost
 
-                gateway_sku = get_product_type_for_pricing(db, "DLT", False, False, None, None, "ADVANCED")
+                gateway_sku = get_product_type_for_pricing(
+                    db, "DLT", False, False, "ADVANCED", None, None,
+                )
                 gateway_breakdown = build_sku_breakdown_classic(
                     sku_type=gateway_sku,
                     dbu_cost=gw_dbu_cost,
